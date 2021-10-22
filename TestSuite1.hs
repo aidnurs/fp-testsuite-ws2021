@@ -49,13 +49,25 @@ spec =
         tzr_zeugen "Urknallexplosiknallon" "knall" @?= [("Ur", "knall", "explosiknallon"),("Urknallexplosi", "knall", "on")],
       testCase "A3.3" $
         tzr_zeugen "Urknallexpknalllosionknall" "knall" @?= [("Ur", "knall", "expknalllosionknall"),("Urknallexp", "knall", "losionknall"),("Urknallexpknalllosion", "knall", "")],
+      testCase "A3.4" $
+        tzr_zeugen "Urknallexplosion" "abc" @?= [],
+      testCase "A3.5" $
+        tzr_zeugen "Ur" "" @?= [("","","Ur"),("U","","r"),("Ur","","")],
 
       testCase "A4.1" $
         wieOft "Urknallexplosion" "knall" @?= 1,
-      testCase "A4.1" $
+      testCase "A4.2" $
+        wieOft "Urknallexplosion" "Knall" @?= 0,
+      testCase "A4.3" $
+        wieOft "Urknallexplosionsknall" "knall" @?= 2,
+      testCase "A4.4" $
+        wieOft "Ur" "" @?= 3,
+      testCase "A4.5" $
         wieOft "Urknallknaexknaplosion" "kna" @?= 3,
-      testCase "A4.1" $
+      testCase "A4.6" $
+        wieOft "aaaaaaa" "b" @?= 0,
+      testCase "A4.7" $
         wieOft "aaaaaaa" "a" @?= 7,
-      testCase "A4.1" $
+      testCase "A4.8" $
         wieOft "ababab" "bab" @?= 1
     ]
