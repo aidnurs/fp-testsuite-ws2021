@@ -24,10 +24,12 @@ spec =
         ist_tzr "" "Urknallexplosion" @?= False,
       testCase "A1.8" $
         ist_tzr "Urknallexplosionsknall" "knall" @?= True,
+
+
       testCase "A2.1" $
         tzr_zeuge "Urknallexplosion" "knall" @?= ("Ur", "knall", "explosion"),
       testCase "A2.2" $
-        tzr_zeuge "Urknallexplosion" "knall"  @?= ("Ur","knall","explosion"),
+        tzr_zeuge "Urexplosionknal" "knall"  @?= ("","knallknall",""),
       testCase "A2.3" $
         tzr_zeuge "Urknallexplosion" "Knall"  @?= ("","KnallKnall",""),
       testCase "A2.4" $
@@ -35,7 +37,25 @@ spec =
       testCase "A2.5" $
         tzr_zeuge "" "" @?= ("","",""),
       testCase "A2.6" $
-        tzr_zeuge "" "asd" @?= ("","asdasd","")
---       testCase "A2.1" $
--- tzr_zeuge "Urknall" ""  @?= ("","","Urknall") oder ("U","","rknall") oder...
+        tzr_zeuge "" "asd" @?= ("","asdasd",""),
+      testCase "A2.7" $
+        tzr_zeuge "abckkkkkkkkk" "abc" @?= ("","abc","kkkkkkkkk"),
+      testCase "A2.8" $
+        tzr_zeuge "kkkkkkkkkabc" "abc" @?= ("kkkkkkkkk","abc",""),
+
+      testCase "A3.1" $
+        tzr_zeugen "Urknallexplosion" "knall" @?= [("Ur", "knall", "explosion")],
+      testCase "A3.2" $
+        tzr_zeugen "Urknallexplosiknallon" "knall" @?= [("Ur", "knall", "explosiknallon"),("Urknallexplosi", "knall", "on")],
+      testCase "A3.3" $
+        tzr_zeugen "Urknallexpknalllosionknall" "knall" @?= [("Ur", "knall", "expknalllosionknall"),("Urknallexp", "knall", "losionknall"),("Urknallexpknalllosion", "knall", "")],
+
+      testCase "A4.1" $
+        wieOft "Urknallexplosion" "knall" @?= 1,
+      testCase "A4.1" $
+        wieOft "Urknallknaexknaplosion" "kna" @?= 3,
+      testCase "A4.1" $
+        wieOft "aaaaaaa" "a" @?= 7,
+      testCase "A4.1" $
+        wieOft "ababab" "bab" @?= 1
     ]
