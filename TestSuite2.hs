@@ -40,7 +40,9 @@ spec =
         isValidDateTests,
         convertDateAndTimeTests,
         checkTestTests,
-        einzulassenTests
+        einzulassenTests,
+        einzulassendeTests,
+        showTests
     ]
 
 
@@ -79,6 +81,51 @@ einzulassenTests =
         -- testCase "einzulassen 13" $
         --   einzulassen (bp,ZweieinhalbG,kzp3) @?= Ungueltig
     ]
+
+
+einzulassendeTests :: TestTree
+einzulassendeTests =
+  testGroup
+    "einzulassende Tests"
+    [ 
+      testCase "einzulassende 1" $
+        einzulassende [bgm, bm, bk] DreiG kzp2 @?= ["Alexander Schallenberg"]
+    ]
+
+
+showTests :: TestTree
+showTests =
+  testGroup
+    "show Tests"
+    [ 
+      testCase "show 1" $
+        show (U (Viertel,Zwoelf,VM)) @?= "11:15 Uhr",
+      testCase "show 2" $
+        show (U (Viertel,Zwoelf,NM)) @?= "23:15 Uhr",
+      testCase "show 3" $
+        show (U (Dreiviertel,Zwoelf,VM)) @?= "11:45 Uhr",
+      testCase "show 4" $
+        show (U (Dreiviertel,Zwoelf,NM)) @?= "23:45 Uhr" ,
+      testCase "show 5" $
+        show (U (Schlag,Zwoelf,VM)) @?= "12:00 Uhr",
+      testCase "show 6" $
+        show (U (Schlag,Zwoelf,NM)) @?= "24:00 Uhr",
+      testCase "show 7" $
+        show (U (Halb,Sechs,VM)) @?= "05:30 Uhr",
+      testCase "show 8" $
+        show (U (Halb,Sechs,NM)) @?= "17:30 Uhr",
+      testCase "show 9" $
+        show (D XXII Okt 2021) @?= "22.10.2021",
+      testCase "show 10" $
+        show (D XXIV Dez 2412) @?= "24.12.2412",
+      testCase "show 11" $
+        show (D I Jan 1) @?= "1.1.1",
+      testCase "show 12" $
+        show (D V Feb 54321) @?= "5.2.54321",
+      testCase "show 13" $
+        show (D XXXI Feb 1234) @?= "Datum ungueltig"
+    ]
+
 
 isValidDateTests :: TestTree
 isValidDateTests = 
