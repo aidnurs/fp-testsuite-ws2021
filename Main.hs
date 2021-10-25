@@ -17,11 +17,12 @@ spec :: TestTree
 spec =
   testGroup
     "All Tests"
-    [ TestSuite1.spec,
-      TestSuite2.spec,
-      TestSuite3.spec,
-      TestSuite4.spec,
-      TestSuite5.spec,
-      TestSuite6.spec,
-      TestSuite7.spec
+    [ 
+      -- TestSuite1.spec,
+      TestSuite2.spec
+      -- TestSuite3.spec,
+      -- TestSuite4.spec,
+      -- TestSuite5.spec,
+      -- TestSuite6.spec,
+      -- TestSuite7.spec
     ]
