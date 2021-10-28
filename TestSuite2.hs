@@ -17,20 +17,26 @@ dgs4 :: DreiG_Status
 dgs4 = Getestet Antigen (D XXII Okt 2021) (U (Schlag,Acht,VM))
 dgs5 :: DreiG_Status
 dgs5 = Geimpft (Sputnik,Zweimal)
-
+dgs6 :: DreiG_Status
+dgs6 = Getestet Antigen (D XXX Nov 2021) (U (Schlag,Sechs,VM))
+dgs7 :: DreiG_Status
+dgs7 = Getestet Antigen (D XXVIII Nov 2021) (U (Schlag,Acht,NM))
 
 buergermeister = P (Vorname "Michael") (Nachname "Ludwig") dgs1 :: Person
 bundesminister = P (Vorname "Wolfgang") (Nachname "Mueckstein") dgs2 :: Person
 bundeskanzler = P (Vorname "Alexander") (Nachname "Schallenberg") dgs3 :: Person
 bundespraesident = P (Vorname "Alexander") (Nachname "van der Bellen") dgs4 :: Person
 sputnik_person = P (Vorname "Alexander") (Nachname "van der Bellen") dgs5 :: Person
+antigen_person = P (Vorname "Alexander") (Nachname "van der Bellen") dgs6 :: Person
+antigen_person_ungueltig = P (Vorname "Alexander") (Nachname "van der Bellen") dgs7 :: Person
 bgm  = buergermeister
 bm   = bundesminister
 bk   = bundeskanzler
 bp   = bundespraesident
 kzp1 = ((D XXII Okt 2021),(U (Dreiviertel,Acht,NM)))
 kzp2 = ((D XXVIII Okt 2021),(U (Dreiviertel,Acht,NM)))
-kzp3 = ((D XXX Nov 2021),(U (Dreiviertel,Acht,NM)))
+kzp3 = ((D XXXI Nov 2021),(U (Dreiviertel,Acht,NM)))
+kzp4 = ((D XXX Nov 2021),(U (Dreiviertel,Acht,NM)))
 
 spec :: TestTree
 spec =
@@ -42,6 +48,7 @@ spec =
         checkTestTests,
         einzulassenTests,
         einzulassendeTests,
+        einzulassende_abzuweisendeTests,
         showTests
     ]
 
@@ -57,29 +64,37 @@ einzulassenTests =
           einzulassen (bgm,DreiG,kzp2) @?= Abweisen,
         testCase "einzulassen 3" $
           einzulassen (sputnik_person,DreiG,kzp2) @?= Abweisen,
-        -- testCase "einzulassen 4" $
-        --   einzulassen (bgm,DreiG,kzp3) @?= Ungueltig,
+        testCase "einzulassen 4" $
+          einzulassen (bgm,DreiG,kzp3) @?= Ungueltig,
+        testCase "einzulassen 4a" $
+          einzulassen (antigen_person,DreiG,kzp3) @?= Ungueltig,
+        testCase "einzulassen 4b" $
+          einzulassen (antigen_person_ungueltig,DreiG,kzp3) @?= Ungueltig,
+        testCase "einzulassen antigen" $
+          einzulassen (antigen_person,DreiG,kzp4) @?= Einlassen,
+        testCase "einzulassen antigen ungueltig" $
+          einzulassen (antigen_person_ungueltig,DreiG,kzp4) @?= Abweisen,
 
         testCase "einzulassen 5" $
           einzulassen (bm,DreiG,kzp1) @?= Abweisen,
         testCase "einzulassen 6" $
           einzulassen (bm,DreiG,kzp2) @?= Abweisen,
-        -- testCase "einzulassen 7" $
-        --   einzulassen (bm,DreiG,kzp3) @?= Ungueltig,
+        testCase "einzulassen 7" $
+          einzulassen (bm,DreiG,kzp3) @?= Ungueltig,
 
         testCase "einzulassen 8" $
-          einzulassen (bk,DreiG,kzp1) @?= Einlassen ,
+          einzulassen (bk,DreiG,kzp1) @?= Einlassen,
         testCase "einzulassen 9" $
-          einzulassen (bk,DreiG,kzp2) @?= Einlassen ,
-        -- testCase "einzulassen 10" $
-        --   einzulassen (bk,DreiG,kzp3) @?= Ungueltig,
+          einzulassen (bk,DreiG,kzp2) @?= Einlassen,
+        testCase "einzulassen 10" $
+          einzulassen (bk,DreiG,kzp3) @?= Ungueltig,
 
         testCase "einzulassen 11" $
-          einzulassen (bp,ZweieinhalbG,kzp1) @?= Abweisen ,
+          einzulassen (bp,ZweieinhalbG,kzp1) @?= Abweisen,
         testCase "einzulassen 12" $
-          einzulassen (bp,ZweieinhalbG,kzp2) @?= Abweisen
-        -- testCase "einzulassen 13" $
-        --   einzulassen (bp,ZweieinhalbG,kzp3) @?= Ungueltig
+          einzulassen (bp,ZweieinhalbG,kzp2) @?= Abweisen,
+        testCase "einzulassen 13" $
+          einzulassen (bp,ZweieinhalbG,kzp3) @?= Ungueltig
     ]
 
 
@@ -92,6 +107,15 @@ einzulassendeTests =
         einzulassende [bgm, bm, bk] DreiG kzp2 @?= ["Alexander Schallenberg"]
     ]
 
+einzulassende_abzuweisendeTests :: TestTree
+einzulassende_abzuweisendeTests =
+  testGroup
+    "einzulassende_abzuweisende Tests"
+    [ 
+      testCase "einzulassende_abzuweisende 1" $
+        einzulassende_abzuweisende [bgm, bm, bk, bp] ZweieinhalbG kzp1 @?= 
+          (["Michael Ludwig","Alexander Schallenberg"],["Wolfgang Mueckstein","Alexander van der Bellen"])
+    ]
 
 showTests :: TestTree
 showTests =
@@ -133,15 +157,17 @@ isValidDateTests =
     "isValidDate Tests"
     [
       testCase "isValidDate 1" $
-        isValidDate (D XXXI Okt 2021) @?= False,
+        isValidDate (D XXXI Okt 2021) @?= True,
       testCase "isValidDate 2" $
         isValidDate (D XXX Okt 2021) @?= True,
       testCase "isValidDate 3" $
-        isValidDate (D XXXI Sep 2021) @?= True,
+        isValidDate (D XXXI Sep 2021) @?= False,
       testCase "isValidDate 4" $
         isValidDate (D XXIX Feb 2021) @?= False,
       testCase "isValidDate 5" $
-        isValidDate (D XXIX Feb 2020) @?= True
+        isValidDate (D XXIX Feb 2020) @?= True,
+      testCase "isValidDate 5" $
+        isValidDate (D XXXI Nov 2021) @?= False
     ]
 
 convertDateAndTimeTests :: TestTree
