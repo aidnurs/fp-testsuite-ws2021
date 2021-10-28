@@ -166,8 +166,12 @@ isValidDateTests =
         isValidDate (D XXIX Feb 2021) @?= False,
       testCase "isValidDate 5" $
         isValidDate (D XXIX Feb 2020) @?= True,
-      testCase "isValidDate 5" $
-        isValidDate (D XXXI Nov 2021) @?= False
+      testCase "isValidDate 6" $
+        isValidDate (D XXXI Nov 2021) @?= False,
+      testCase "isValidDate 7" $
+        isValidDate (D I Jan 2000) @?= True,
+      testCase "isValidDate 8" $
+        isValidDate (D XXX Dez 1999) @?= True
     ]
 
 convertDateAndTimeTests :: TestTree
@@ -176,7 +180,7 @@ convertDateAndTimeTests =
     "convertDateAndTime Tests"
     [
       testCase "convertDateAndTime 1" $
-        convertDateAndTime (D X Okt 2021) (U (Dreiviertel,Acht,NM)) @?= 90362700
+        convertDateAndTime (D X Okt 2021) (U (Dreiviertel,Acht,NM)) @?= 1633898700
     ]
 
 checkTestTests :: TestTree

@@ -4,6 +4,7 @@ import Test.Tasty
 import Test.Tasty.HUnit
 import qualified TestSuite1
 import qualified TestSuite2
+import qualified TestSuite2a
 import qualified TestSuite3
 import qualified TestSuite4
 import qualified TestSuite5
@@ -19,7 +20,8 @@ spec =
     "All Tests"
     [ 
       -- TestSuite1.spec,
-      TestSuite2.spec
+      TestSuite2.spec,
+      TestSuite2a.spec
       -- TestSuite3.spec,
       -- TestSuite4.spec,
       -- TestSuite5.spec,
