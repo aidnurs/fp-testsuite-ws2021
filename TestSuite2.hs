@@ -180,8 +180,36 @@ convertDateAndTimeTests =
     "convertDateAndTime Tests"
     [
       testCase "convertDateAndTime 1" $
-        convertDateAndTime (D X Okt 2021) (U (Dreiviertel,Acht,NM)) @?= 1633898700
+        convertDateAndTime (D X Okt 2021) (U (Dreiviertel,Acht,NM)) @?= 1633895100,
+      testCase "convertDateAndTime 2" $
+        convertDateAndTime (D I Jan 1970) (U (Dreiviertel,Acht,NM)) @?= 71100,
+      testCase "convertDateAndTime 3" $
+        convertDateAndTime (D I Okt 1999) (U (Schlag,Zwoelf,NM)) @?= 938822400,
+      testCase "convertDateAndTime 4" $
+        convertDateAndTime (D XX Feb 2003) (U (Schlag,Acht,VM)) @?= 1045728000,
+      testCase "convertDateAndTime 5" $
+        convertDateAndTime (D I Mar 2020) (U (Halb,Eins,VM)) @?= 1583022600
     ]
+
+  
+stundeVHDSInSecondsTests :: TestTree
+stundeVHDSInSecondsTests =
+  testGroup
+    "stundeVHDSInSeconds Tests"
+    [
+      testCase "stundeVHDSInSeconds 1" $
+        stundeVHDSInSeconds (U (Dreiviertel,Acht,NM)) @?= 71100,
+      testCase "convertDateAndTime 1" $
+        stundeVHDSInSeconds (U (Dreiviertel,Acht,VM)) @?= 74700,
+      testCase "convertDateAndTime 1" $
+        stundeVHDSInSeconds (U (Schlag,Zwoelf,NM)) @?= 86400,
+      testCase "convertDateAndTime 1" $
+        stundeVHDSInSeconds (U (Schlag,Acht,VM)) @?= 1633898700,
+      testCase "convertDateAndTime 1" $
+        stundeVHDSInSeconds (U (Halb,Eins,VM)) @?= 1800
+    ]
+
+    
 
 checkTestTests :: TestTree
 checkTestTests =
