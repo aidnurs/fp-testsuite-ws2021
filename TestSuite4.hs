@@ -219,9 +219,9 @@ sortTests =
   testGroup
     "sort Tests"
     [ testCase "sort 1" $
-        sortTest ([]) @?= [],
+        sortKKassabuch ([]) @?= [],
       testCase "sort 2" $
-        sortTest ([saldo_eintrag1, saldo_eintrag2, saldo_eintrag3, saldo_eintrag4]) @?= [saldo_eintrag3, saldo_eintrag2, saldo_eintrag4, saldo_eintrag1]
+        sortKKassabuch ([saldo_eintrag1, saldo_eintrag2, saldo_eintrag3, saldo_eintrag4]) @?= [saldo_eintrag3, saldo_eintrag2, saldo_eintrag4, saldo_eintrag1]
     ]
 
 filterGPTests :: TestTree
