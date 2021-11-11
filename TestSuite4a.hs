@@ -416,7 +416,9 @@ a4_saldiere_tests :: TestTree
 a4_saldiere_tests =
   testGroup
     "-----A4 saldiere Tests-----"
-    [ testCase "lexikographisch_einfach" $
+    [ testCase "findAllGeschaeftspartner" $
+        findAllGeschaeftspartner kassabuc_Zahl_Antw @?= [maxM2, maxM, anna],
+      testCase "lexikographisch_einfach" $
         saldiere kassab_lexikographisch_einfach @?= sKB_lexikographisch_einfach,
       testCase "lexikographisch" $
         saldiere kassab_lexikographisch @?= sKB_lexikographisch,

@@ -23,7 +23,7 @@ spec =
       -- TestSuite2.spec,
       -- TestSuite2a.spec,
       -- TestSuite3.spec,
-      -- TestSuite4.spec,
+      TestSuite4.spec,
       TestSuite4a.spec
       -- TestSuite5.spec,
       -- TestSuite6.spec,

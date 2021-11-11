@@ -1,7 +1,6 @@
 module TestSuite4 where
 
 import Angabe4
-import Angabe4 (Saldo (Forderungssaldo))
 import Test.Tasty
 import Test.Tasty.HUnit
 
@@ -13,6 +12,9 @@ gp1_fixed = GP "Zuckerberg" (D I Mar 2020)
 
 gp1_fixed_same_name :: Geschaeftspartner
 gp1_fixed_same_name = GP "Zuckerberg" (D I Mar 2019)
+
+gp1_fixed_same_name_diff_date :: Geschaeftspartner
+gp1_fixed_same_name_diff_date = GP "Zuckerberg" (D I Mar 2016)
 
 gp2 :: Geschaeftspartner
 gp2 = GP "Gates" (D XXXI Nov 2016)
@@ -45,19 +47,19 @@ gv2 :: Geschaeftsvorfall
 gv2 = Zahlung (C 1340) DreiProzent (D XII Apr 2020)
 
 gv2_fixed :: AP_Geschaeftsvorfall
-gv2_fixed = AP_Zahlung (C 1299) (D XII Apr 2020)
+gv2_fixed = AP_Zahlung (C 1300) (D XII Apr 2020)
 
 gv2_fixed_euro :: K_Geschaeftsvorfall
-gv2_fixed_euro = K_Zahlung (EC 12 99) (D XII Apr 2020)
+gv2_fixed_euro = K_Zahlung (EC 13 00) (D XII Apr 2020)
 
 gv3 :: Geschaeftsvorfall
 gv3 = Zahlung (C 5) FuenfProzent (D XXXI Jul 2020)
 
 gv3_fixed :: AP_Geschaeftsvorfall
-gv3_fixed = AP_Zahlung (C 4) (D XXXI Jul 2020)
+gv3_fixed = AP_Zahlung (C 5) (D XXXI Jul 2020)
 
 gv3_fixed_euro :: K_Geschaeftsvorfall
-gv3_fixed_euro = K_Zahlung (EC 0 4) (D XXXI Jul 2020)
+gv3_fixed_euro = K_Zahlung (EC 0 5) (D XXXI Jul 2020)
 
 gv4 :: Geschaeftsvorfall
 gv4 = Gutschrift (C 100) (D XV Dez 2020)
@@ -119,8 +121,14 @@ eintrag4_gp1_fixed_euro = (gp1_fixed, gv4_fixed_euro)
 kb1 :: Kassabuch
 kb1 = KB [eintrag1, eintrag2, eintrag3, (gp1_fixed_same_name, gv1)]
 
+kb1_1 :: Kassabuch
+kb1_1 = KB [eintrag1, eintrag2, eintrag3, eintrag1]
+
 kkb1 :: KonsolidiertesKassabuch
 kkb1 = KKB [eintrag1_fixed_euro, eintrag2_fixed_euro, eintrag3_fixed_euro, (gp1_fixed_same_name, gv1_fixed_euro)]
+
+skb1 :: SaldiertesKassabuch
+skb1 = SKB [saldo_eintrag3, saldo_eintrag2, saldo_eintrag1]
 
 kkb2 :: KonsolidiertesKassabuch
 kkb2 = KKB [eintrag1_fixed_euro, eintrag2_fixed_euro, eintrag3_fixed_euro, eintrag4_gp1_fixed_euro]
@@ -131,6 +139,18 @@ kkb3 = KKB [eintrag4_gp1_fixed_euro]
 kkb4 :: KonsolidiertesKassabuch
 kkb4 = KKB [eintrag4_gp1_fixed_euro, (gp1_fixed, gv4_fixed_euro_zahlung), (gp1_fixed_same_name, gv4_fixed_euro_zahlung)]
 
+saldo_eintrag1 :: (Geschaeftspartner, Saldo)
+saldo_eintrag1 = (gp1, Zahlungssaldo (EC 2 24))
+
+saldo_eintrag2 :: (Geschaeftspartner, Saldo)
+saldo_eintrag2 = (gp2, Zahlungssaldo (EC 13 00))
+
+saldo_eintrag3 :: (Geschaeftspartner, Saldo)
+saldo_eintrag3 = (gp3, Zahlungssaldo (EC 0 5))
+
+saldo_eintrag4 :: (Geschaeftspartner, Saldo)
+saldo_eintrag4 = (gp4, Keine_Geschaeftsbeziehung)
+
 spec :: TestTree
 spec =
   testGroup
@@ -138,6 +158,9 @@ spec =
     [ waupTests,
       konsolidiereTests,
       saldoTests,
+      saldiereTests,
+      sortTests,
+      filterGPTests,
       utilsTests
     ]
 
@@ -181,11 +204,51 @@ saldoTests =
         saldo gp4_fixed (KKB []) @?= Keine_Geschaeftsbeziehung
     ]
 
+saldiereTests :: TestTree
+saldiereTests =
+  testGroup
+    "saldiere Tests"
+    [ testCase "saldiere 1" $
+        saldiere kb1_1 @?= skb1,
+      testCase "saldiere 2" $
+        saldiere (KB []) @?= SKB []
+    ]
+
+sortTests :: TestTree
+sortTests =
+  testGroup
+    "sort Tests"
+    [ testCase "sort 1" $
+        sortTest ([]) @?= [],
+      testCase "sort 2" $
+        sortTest ([saldo_eintrag1, saldo_eintrag2, saldo_eintrag3, saldo_eintrag4]) @?= [saldo_eintrag3, saldo_eintrag2, saldo_eintrag4, saldo_eintrag1]
+    ]
+
+filterGPTests :: TestTree
+filterGPTests =
+  testGroup
+    "filterGP Tests"
+    [ testCase "filterGP 1" $
+        filterGP ([gp1, gp1, gp1_fixed_same_name]) @?= [gp1, gp1_fixed_same_name]
+    ]
+
 utilsTests :: TestTree
 utilsTests =
   testGroup
     "utils Tests"
-    [ testCase "isLeapYear 1" $
+    [ testCase "compareSKEntry 1" $
+        compareSKEntry (gp1, Forderungssaldo (EC 1 0)) (gp1, Forderungssaldo (EC 1 0)) @?= EQ,
+      testCase "compareSKEntry 2" $
+        compareSKEntry (gp1_fixed, Forderungssaldo (EC 1 0)) (GP "Zuckerberg" (D I Mar 2020), Forderungssaldo (EC 1 0)) @?= EQ,
+      testCase "compareSKEntry 3" $
+        compareSKEntry (gp1_fixed, Forderungssaldo (EC 1 0)) (GP "Zuckerberg" (D II Apr 2020), Forderungssaldo (EC 1 0)) @?= LT,
+      testCase "compareSKEntry 4" $
+        compareSKEntry (gp1_fixed, Forderungssaldo (EC 1 0)) (GP "Zuckerberg" (D II Mar 2020), Forderungssaldo (EC 1 0)) @?= LT,
+      testCase "compareSKEntry 5" $
+        compareSKEntry (gp1_fixed, Forderungssaldo (EC 1 0)) (GP "Zuckerberg" (D II Mar 2019), Forderungssaldo (EC 1 0)) @?= GT,
+      testCase "compareSKEntry 5" $
+        compareSKEntry (gp1_fixed, Forderungssaldo (EC 1 0)) (GP "Auckerberg" (D II Mar 2019), Forderungssaldo (EC 1 0)) @?= GT,
+      testCase "isLeapYear 1" $
         isLeapYear 2021 @?= False,
       testCase "isLeapYear 2" $
         isLeapYear 2020 @?= True,
@@ -208,7 +271,7 @@ utilsTests =
       testCase "centToEuro 4" $
         centToEuro (C 401) @?= EC 4 01,
       testCase "sumKassabuchToSignedCents 1" $
-        sumKassabuchToSignedCents kkb2 @?= -1315,
+        sumKassabuchToSignedCents kkb2 @?= -1317,
       testCase "signedVorfallAmount 1" $
         signedVorfallAmount gv1_fixed_euro @?= -112,
       testCase "signedVorfallAmount 1" $
